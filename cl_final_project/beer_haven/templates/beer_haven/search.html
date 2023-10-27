@@ -1,0 +1,52 @@
+{% extends 'beer_haven/base.html' %}
+
+{% block title %} Search Results {% endblock %}
+
+{% block content %}
+    <main role="main">
+        <div class="row">
+        <h3 class>
+            Search results with {{ query }}
+        </h3>
+        <div class="container">
+            <h4>Total results found: {{ results.count }} </h4>
+        </div>
+        </div>
+        <div class="container">
+
+            {% if results %}
+                {% for recipe in results %}
+                    {{ forloop.counter }}: <a href="{% url 'recipe-details' recipe.pk %}">{{ recipe.title }}</a>
+                    <h4>{{ recipe.description }}</h4>
+                {% empty %}
+                    <p>There is no results for {{ query }}</p>
+                {% endfor %}
+{#                <table class="table">#}
+{#                    <thead>#}
+{#                        <tr class="d-flex navbar-dark bg-dark">#}
+{#                            <th scope="col" class="col-1 navbar-brand d-flex align-items-center justify-content-center ">No.</th>#}
+{#                            <th scope="col" class="col-6 navbar-brand d-flex align-items-center justify-content-center ">Title</th>#}
+{#                            <th scope="col" class="col-2 navbar-brand d-flex align-items-center justify-content-center ">Estimated ABV</th>#}
+{#                            <th scope="col" class="col-3 navbar-brand d-flex align-items-center justify-content-center ">Details</th>#}
+{#                        </tr>#}
+{#                    </thead>#}
+{#                    <tbody class="text-color-lighter">#}
+{#                        {% for recipe in recipes %}#}
+{#                            <tr class="d-flex">#}
+{#                                <td class="col-1">{{ forloop.counter }}</td>#}
+{#                                <td class="col-6 d-flex align-items-center justify-content-center "> {{ recipe.title }}</td>#}
+{#                                <td class="col-2 d-flex align-items-center justify-content-center "> {{ recipe.estimated_abv }}</td>#}
+{#                                <td class="col-3 d-flex align-items-center justify-content-center ">#}
+{#                                    <a class="btn btn-secondary btn-sm ml-3"#}
+{#                                       href="{% url 'recipe-details' recipe.id%}" role="button">View details &raquo;</a>#}
+{##}
+{#                                </td>#}
+{#                            </tr>#}
+{#                        {% endfor %}#}
+{#                    </tbody>#}
+{#                </table>#}
+{#                {% include 'beer_haven/pagination.html' %}#}
+            {% endif %}
+        </div>
+    </main>
+{% endblock %}

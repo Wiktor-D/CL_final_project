@@ -1,0 +1,25 @@
+{% extends 'beer_haven/base.html' %}
+
+{% block title %} Login {% endblock %}
+
+{% block content %}
+    <main role="main">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    {% include "beer_haven/primary-form.html"  %}
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <p>
+                    <a class="btn btn-primary btn-sm ml-3" href="{% url "register" %}">
+                        register here
+                        <span class="sr-only">(current)</span>
+                    </a>
+                </p>
+            </div>
+        </div>
+    </main>
+{% endblock %}

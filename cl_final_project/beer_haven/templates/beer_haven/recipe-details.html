@@ -1,0 +1,82 @@
+{% extends 'beer_haven/base.html' %}
+
+{% block title %} Recipe Details {% endblock %}
+
+{% block content %}
+    <main role="main">
+{#        <div class="row">#}
+{#        </div>#}
+    <div class="container">
+        {% if recipe %}
+
+                <div class="row">
+                    <div class="col-mt-5">
+                        <h2>{{ recipe.title }}</h2>
+                        <h6>recipe created: {{ recipe.created }}</h6>
+                    </div>
+                </div>
+
+{#            <div class="container">#}
+                <div class="row">
+                    <div class="col-mt-5">
+                        <h5>estimated abv: </h5>
+                        <p>{{ recipe.estimated_abv }} %</p>
+                        <h5>short description: </h5>
+                        <p>{{ recipe.description }}</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-mt-5">
+                        <h5>preparation description: </h5>
+                        <p>{{ recipe.prep_description|linebreaks}}</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-mt-5">
+                        <h5>categories:  </h5>
+                        <ul>
+                            {% for category in recipe.categories.all %}
+                                <li>{{ category.name }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-mt-5">
+                        <h5>ingredients:  </h5>
+                        <ul>
+                            {% for ingredient in recipe.recipe_ingredients.all %}
+                                <li>{{ ingredient.ingredient.name }} - {{ ingredient.amount }} g</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                {% if recipe.image %}
+                    <div class="row">
+                        <div class="col-mt-5">
+                            <h5>photo:  </h5>
+                            <img src="{{ recipe.image.url }}">
+                        </div>
+                    </div>
+                {% endif %}
+{#            </div>#}
+        {% endif %}
+            {% if admin_or_superuser %}
+                <div class="row">
+                    <div class="col-md-4">
+
+                        <div class="col-mt-5">
+                            <h5>Experience TIPS:  </h5>
+                                <ul>
+                                    {% for tip in experience_tips %}
+                                        <li>{{ tip.content|linebreaks }}</li>
+                                    {% endfor %}
+                                </ul>
+                        </div>
+
+                    </div>
+                </div>
+        {% endif %}
+    </div>
+    </main>
+{% endblock %}
