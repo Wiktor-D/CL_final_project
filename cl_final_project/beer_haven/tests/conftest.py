@@ -23,6 +23,7 @@ def random_user():
     return User.objects.create_user(
         username=fake.user_name(),
         password=fake.password(),
+        is_active=True,
         # first_name=fake.first_name(),
         # last_name=fake.last_name(),
     )

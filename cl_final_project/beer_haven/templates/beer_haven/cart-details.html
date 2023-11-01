@@ -1,0 +1,65 @@
+{% extends 'beer_haven/base.html' %}
+
+{% block title %} Cart details {% endblock %}
+
+{% block content %}
+    <main role="main">
+        <div class="row">
+        <h3 class>
+            Cart
+        </h3>
+        </div>
+        <div class="container">
+
+{#            {% if recipes %}#}
+                <table class="table cart">
+                    <thead>
+                        <tr class="d-flex navbar-dark bg-dark">
+                            <th scope="col" class="col-1 navbar-brand d-flex align-items-center justify-content-center ">No.</th>
+                            <th scope="col" class="col-5 navbar-brand d-flex align-items-center justify-content-center ">Ingredient</th>
+                            <th scope="col" class="col-2 navbar-brand d-flex align-items-center justify-content-center ">Amount</th>
+                            <th scope="col" class="col-1 navbar-brand d-flex align-items-center justify-content-center ">Unit Price</th>
+                            <th scope="col" class="col-1 navbar-brand d-flex align-items-center justify-content-center ">Price</th>
+                            <th scope="col" class="col-2 navbar-brand d-flex align-items-center justify-content-center ">Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-color-lighter">
+                        {% for item in cart %}
+                            {% with ingredient=item.ingredient %}
+                            <tr class="d-flex">
+                                <td class="col-1">{{ forloop.counter }}</td>
+                                <td class="col-5 d-flex align-items-center justify-content-center "> {{ ingredient.name }}</td>
+                                <td class="col-2 d-flex align-items-center justify-content-center "> {{ item.amount }}</td>
+                                <td class="col-1 d-flex align-items-center justify-content-center "> {{ item.price }}</td>
+                                <td class="col-1 d-flex align-items-center justify-content-center "> {{ item.total_price }}</td>
+                                <td class="col-2 d-flex align-items-center justify-content-center ">
+
+                                    <form action="{% url 'cart_remove' ingredient.id %}" method="POST">
+                                        <input  class="btn btn-outline-secondary btn-sm" type="submit" value="Delete">
+                                        {% csrf_token %}
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endwith %}
+                        {% endfor %}
+                        <tr class="total">
+                            <td> Total </td>
+                            <td colspan="6"></td>
+                            <td>{{ cart.get_total_price }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+{#                {% include 'beer_haven/pagination.html' %}#}
+{#            {% endif %}#}
+        </div>
+        <div class="container">
+            <p>
+                <a class="btn btn-secondary btn-sm ml-3"
+                   href="{% url 'recipes' %}" role="button">Cotinue shopping &raquo;</a>
+                <a class="btn btn-secondary btn-sm ml-3"
+                   href="#" role="button">Order &raquo;</a>
+
+            </p>
+        </div>
+    </main>
+{% endblock %}

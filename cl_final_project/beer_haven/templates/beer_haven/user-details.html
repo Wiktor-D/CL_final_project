@@ -5,13 +5,59 @@
 {% block content %}
     <main role="main">
         <div class="container">
-            <div class="row">
-                <div class="col-md-4 col-mt-5">
+
+                <div>
                     <h3 class="display-3">Greetings {{user.first_name | default:user.username}}</h3>
-                    <p>
-                        On this subsite You will find details about logged user
-                    </p>
+                    <h4> User details: </h4>
+                        {% if user.profile.avatar %}
+                            <div class="row">
+                                <div class="col-mt-5">
+                                    <img src="{{ user.profile.avatar.url }}" width="200">
+                                </div>
+                            </div>
+                        {% endif %}
+                        <ul>
+                            <li>username: {{ user.username }}</li>
+                            <li>first name: {{ user.first_name }}</li>
+                            <li>last name: {{ user.last_name }}</li>
+                            <li>birthdate: {{ user.profile.birthdate }}</li>
+                        </ul>
+                        {% if user.addresses.all %}
+
+                                <h5>User addresses: </h5>
+                                <div class="col-md-5">
+                                    <ul>
+                                        {% for address in user.addresses.all %}
+                                            <li>
+                                                {{ address }}
+                                                <a class="btn btn-outline-secondary btn-sm" href="{% url "address_change" address.pk %}">
+                                                edit address
+                                                </a>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+
+                        {% endif %}
+
                 </div>
+            <div class="row">
+                <p>
+                    <a class="btn btn-primary btn-sm ml-3" href="{% url "password_change" %}">
+                    change password
+                    </a>
+                </p>
+                <p>
+                    <a class="btn btn-primary btn-sm ml-3" href="{% url "profile_change" %}">
+                    change profile
+                    </a>
+                </p>
+                <p>
+                    <a class="btn btn-primary btn-sm ml-3" href="{% url "add_address" %}">
+                    add address
+                    </a>
+                </p>
+
             </div>
         </div>
 

@@ -4,17 +4,27 @@
 
 {% block content %}
     <main role="main">
-        <div class="row">
-        <h3 class>
-            Search results with {{ query }}
-        </h3>
         <div class="container">
-            <h4>Total results found: {{ results.count }} </h4>
-        </div>
-        </div>
-        <div class="container">
+            <H3>Enter Query </H3>
+            <form method='post' class="form-inline my-2 my-lg-0">
+                {% csrf_token %}
+                {{ form }}
 
-            {% if results %}
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
+        </div>
+        {%  if results %}
+            <div class="row">
+            <h3 class>
+                Search results with "{{ query }}"
+            </h3>
+            <div class="container">
+                <h4>Total results found: {{ results.count }} </h4>
+            </div>
+            </div>
+            <div class="container">
+
+
                 {% for recipe in results %}
                     {{ forloop.counter }}: <a href="{% url 'recipe-details' recipe.pk %}">{{ recipe.title }}</a>
                     <h4>{{ recipe.description }}</h4>
@@ -46,7 +56,7 @@
 {#                    </tbody>#}
 {#                </table>#}
 {#                {% include 'beer_haven/pagination.html' %}#}
-            {% endif %}
+        {% endif %}
         </div>
     </main>
 {% endblock %}

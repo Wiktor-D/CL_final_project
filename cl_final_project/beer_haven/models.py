@@ -2,6 +2,7 @@
 from django.db import models
 from django.utils import timezone
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.conf import settings
 
 # Create your models here.
 
@@ -48,9 +49,18 @@ class Ingredient(models.Model):
 
 
 class RecipeIngredient(models.Model):
+    UNIT = (
+        (0, "g"),
+        (1, "kg"),
+        (2, "piece"),
+    )
+
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='recipe_ingredients')
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE, related_name='ingredient_recipes')
-    amount = models.PositiveIntegerField()
+    amount = models.FloatField(
+        validators=[MinValueValidator(0)]
+    )
+    unit = models.PositiveSmallIntegerField(choices=UNIT, default=0)
 
 
 class Category(models.Model):
@@ -87,3 +97,34 @@ class Dictionary(models.Model):
         ordering = ['title']
         verbose_name = 'Dictionary'
         verbose_name_plural = 'Dictionaries'
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    birthdate = models.DateField(blank=True, null=True)
+    avatar = models.ImageField(upload_to='beer_haven/user_profile/', blank=True)
+
+
+    def __str__(self):
+        return self.user.username
+
+
+class UserAddress(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='addresses')
+    city = models.CharField(max_length=255, blank=True, null=True)
+    street = models.CharField(max_length=255, blank=True, null=True)
+    building_nr = models.PositiveSmallIntegerField(blank=True, null=True)
+    apartment_nr = models.PositiveSmallIntegerField(blank=True, null=True)
+    postal_code = models.CharField(max_length=6, blank=True, null=True)
+    is_shipping_addr = models.BooleanField(default=False)
+    is_billing_addr = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'{self.city}, {self.street} bldg. {self.building_nr} apt. {self.apartment_nr}'
+
+    class Meta:
+
+        verbose_name = 'User address'
+        verbose_name_plural = 'User addresses'
+
+

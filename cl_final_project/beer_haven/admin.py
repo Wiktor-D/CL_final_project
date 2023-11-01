@@ -1,9 +1,8 @@
 from django.contrib import admin
-from .models import Recipe, Ingredient, Category, ExperienceTip, Dictionary, RecipeIngredient
+from .models import Recipe, Ingredient, Category, ExperienceTip, Dictionary, RecipeIngredient, Profile, UserAddress
 # Register your models here.
 
-# def price_format(obj):
-#     return "{:.2f} PLN".format(obj.price)
+
 
 
 # https://docs.djangoproject.com/en/4.2/ref/contrib/admin/
@@ -72,4 +71,13 @@ class DictionaryAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ["title"]}
     list_filter = ['title']
 
+
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ['user', 'birthdate', 'avatar']
+
+
+@admin.register(UserAddress)
+class UserAddressAdmin(admin.ModelAdmin):
+    list_display = ['user', 'city', 'street', 'building_nr', 'apartment_nr', 'postal_code', 'is_shipping_addr', 'is_billing_addr']
 

@@ -46,7 +46,7 @@
                         <h5>ingredients:  </h5>
                         <ul>
                             {% for ingredient in recipe.recipe_ingredients.all %}
-                                <li>{{ ingredient.ingredient.name }} - {{ ingredient.amount }} g</li>
+                                <li>{{ ingredient.ingredient.name }} - {{ ingredient.amount }} {{ ingredient.get_unit_display }}</li>
                             {% endfor %}
                         </ul>
                     </div>

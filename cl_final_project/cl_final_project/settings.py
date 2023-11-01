@@ -31,13 +31,15 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'beer_haven.apps.BeerHavenConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'beer_haven.apps.BeerHavenConfig',
+    'localflavor',
+
 ]
 
 MIDDLEWARE = [
@@ -131,7 +133,7 @@ LOGIN_URL = '/login/'
 
 
 try:
-    from .local_settings import DATABASES
+    from .local_settings import DATABASES, EMAIL_BACKEND, EMAIL_HOST_USER
 except ModuleNotFoundError:
     print("There is no database configuration in local_settings.py file!")
     print("Fill missing data and try again!")

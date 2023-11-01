@@ -2,6 +2,8 @@ from django import forms
 
 from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model, authenticate
+from .models import Profile, UserAddress
+from localflavor.pl.forms import PLPostalCodeField
 
 User = get_user_model()
 
@@ -37,6 +39,9 @@ class UserRegistrationForm(forms.ModelForm):
         widgets = {
             'password': forms.PasswordInput
         }
+        help_texts = {
+            'username': ''
+        }
 
     def clean(self):
         cd = super().clean()
@@ -45,5 +50,35 @@ class UserRegistrationForm(forms.ModelForm):
         if pass1 != pass2:
             raise ValidationError('Password must be identical!')
 
+    def clean_email(self):
+        cd = self.cleaned_data['email']
+        if User.objects.filter(email=cd).exists():
+            raise ValidationError('this email already exists')
+        return cd
+
+
+
 class SearchForm(forms.Form):
     query = forms.CharField(label='')
+
+
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['birthdate', 'avatar']
+
+
+class UserAddressForm(forms.ModelForm):
+    postal_code = PLPostalCodeField()
+
+    class Meta:
+        model = UserAddress
+        fields = ['city', 'street', 'building_nr', 'apartment_nr', 'postal_code', 'is_billing_addr', 'is_shipping_addr']
+
+
+class CartAddRecipeForm(forms.Form):
+
+    amount = forms.FloatField
+    override = forms.BooleanField(required=False,
+                                  initial=False,
+                                  widget=forms.HiddenInput)
