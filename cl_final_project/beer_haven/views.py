@@ -12,7 +12,7 @@ from django.views.generic import ListView, FormView, CreateView, UpdateView, Det
 from django.urls import reverse_lazy, reverse
 
 from .cart import Cart
-from .forms import LoginForm, SearchForm, UserRegistrationForm, UserProfileForm, UserAddressForm, CartAddRecipeForm
+from .forms import LoginForm, SearchForm, UserRegistrationForm, UserProfileForm, UserAddressForm, CartAddIngredientForm
 from .models import Dictionary, Recipe, Ingredient, ExperienceTip, Profile, UserAddress
 
 
@@ -208,7 +208,7 @@ class CartAddView(View):
     def post(self, request, ingredient_id):
         cart = Cart(request)
         ingredient = get_object_or_404(Ingredient, id=ingredient_id)
-        form = CartAddRecipeForm(request.POST)
+        form = CartAddIngredientForm(request.POST)
         if form.is_valid():
             cd = form.cleaned_data
             cart.add(
@@ -217,6 +217,29 @@ class CartAddView(View):
                 override_amount=cd['override']
             )
         return redirect('cart_details')
+
+
+@method_decorator(require_POST, name='dispatch')
+class CartAddRecipeView(View):
+    """ View to add all recipe ingredients to the shopping cart / update the amount of products already in it.
+        The require_post decorator makes sure that only post requests are allowed.
+        The view gets the ingredient_id parameter based on this id we retrieve the corresponding copy
+        of the Ingredient model.
+        If the form is valid we add the product to the cart and are redirected to the cart details page.
+
+        Args:
+            param1 (int): ingredient_id
+
+        Returns:
+            Redirect to cart_detail
+
+        """
+    def post(self, request, recipe_id):
+        cart = Cart(request)
+        recipe = get_object_or_404(Recipe, id=recipe_id)
+        cart.add_recipe(recipe)
+        return redirect('cart_details')
+
 
 
 @method_decorator(require_POST, name='dispatch')
@@ -234,6 +257,13 @@ class CartDetailView(View):
     """view retrieves the current shopping cart and displays its contents """
     def get(self, request):
         cart = Cart(request)
+        for item in cart:
+            item['update_amount_form'] = CartAddIngredientForm(
+                initial={
+                    'amount': item['amount'],
+                    'override': True
+                }
+            )
         return render(request, 'beer_haven/cart-details.html', {'cart': cart})
 
 

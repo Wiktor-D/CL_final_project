@@ -59,6 +59,12 @@
                         </div>
                     </div>
                 {% endif %}
+                <div>
+                    <form action="{% url 'cart_add_recipe' recipe.id %}" method="POST">
+                        <input  class="btn btn-outline-primary btn-sm" type="submit" value="Buy All Ingredients">
+                        {% csrf_token %}
+                    </form>
+                </div>
 {#            </div>#}
         {% endif %}
             {% if admin_or_superuser %}

@@ -128,3 +128,10 @@ class UserAddress(models.Model):
         verbose_name_plural = 'User addresses'
 
 
+class Order(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='order_user')
+    billing_address = models.ForeignKey(UserAddress, on_delete=models.CASCADE, related_name='order_billing_addr')
+    shipping_address = models.ForeignKey(UserAddress, on_delete=models.CASCADE, related_name='order_shipping_addr')
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    paid = models.BooleanField(default=False)

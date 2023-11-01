@@ -76,9 +76,9 @@ class UserAddressForm(forms.ModelForm):
         fields = ['city', 'street', 'building_nr', 'apartment_nr', 'postal_code', 'is_billing_addr', 'is_shipping_addr']
 
 
-class CartAddRecipeForm(forms.Form):
+class CartAddIngredientForm(forms.Form):
 
-    amount = forms.FloatField
+    amount = forms.FloatField()
     override = forms.BooleanField(required=False,
                                   initial=False,
                                   widget=forms.HiddenInput)

@@ -23,13 +23,14 @@ class Cart:
         ingredient_id = str(ingredient.id)
         if ingredient_id not in self.cart:
             self.cart[ingredient_id] = {
-                'amount': amount,
+                'amount': 0,
                 'price': str(ingredient.price)
             }
         if override_amount:
             self.cart[ingredient_id]['amount'] = amount
         else:
             self.cart[ingredient_id]['amount'] += amount
+        self.save()
 
     def save(self):
         """marking the session as modified, which will indicate, that it has been saved"""
@@ -61,16 +62,25 @@ class Cart:
             cart[str(ingredient.id)]['ingredient'] = ingredient
         for item in cart.values():
             item['price'] = Decimal(item['price'])
+            item['amount'] = Decimal(item['amount'])
             item['total_price'] = item['price'] * item['amount']
             yield item
 
     def get_total_price(self):
         """ method returns the total sum of the prices of all products in the shopping cart """
-        costs = [Decimal(item['price']) * item['amount'] for item in self.cart.values()]
+        costs = [Decimal(item['price']) * Decimal(item['amount']) for item in self.cart.values()]
         return sum(costs)
 
     def clear(self):
         """ method removes the contents of the cart"""
         del self.session['cart']
         self.save()
+
+    def add_recipe(self, recipe):
+        """ method adds to cart all ingredients in given recipe"""
+        for ingredient in recipe.recipe_ingredients.all():
+            self.add(ingredient.ingredient, ingredient.amount)
+
+        # session_data = dict(self.session.items())
+        # print(session_data)
 

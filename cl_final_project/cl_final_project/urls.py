@@ -49,6 +49,7 @@ urlpatterns = [
     path('cart-add/<int:ingredient_id>/', bh_views.CartAddView.as_view(), name='cart_add'),
     path('cart-remove/<int:ingredient_id>/', bh_views.CartRemoveView.as_view(), name='cart_remove'),
     path('cart-details/', bh_views.CartDetailView.as_view(), name='cart_details'),
+    path('cart-add-recipe/<int:recipe_id>/', bh_views.CartAddRecipeView.as_view(), name='cart_add_recipe'),
 
 
 ]
