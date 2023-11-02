@@ -13,10 +13,11 @@ from django.views.generic import ListView, FormView, CreateView, UpdateView, Det
 from django.urls import reverse_lazy, reverse
 from django.core.mail import send_mail
 import stripe
+from decimal import Decimal
 from stripe.error import StripeError
 from .cart import Cart
 from .forms import LoginForm, SearchForm, UserRegistrationForm, UserProfileForm, UserAddressForm, CartAddIngredientForm, GuestOrderCreateForm
-from .models import Dictionary, Recipe, Ingredient, ExperienceTip, Profile, UserAddress, GuestOrderItem, Order
+from .models import Dictionary, Recipe, Ingredient, ExperienceTip, Profile, UserAddress, GuestOrderItem, GuestOrder
 from cl_final_project.settings import EMAIL_HOST_USER, STRIPE_SECRET_KEY, STRIPE_API_VERSION
 
 
@@ -332,6 +333,8 @@ class GuestOrderCreateView(View):
             self.send_order_email(guest_order, cart)
             cart.clear()
             request.session['order_id'] = guest_order.id
+
+
             return redirect(reverse('payment_process'))
             # return render(request, 'beer_haven/order-thx.html', {'order': guest_order})
         return render(request, self.template_name, {'form': form, 'cart': cart})
@@ -356,14 +359,15 @@ class PaymentProcess(View):
     """
     def get(self, request):
         order_id = request.session.get('order_id', None)
-        order = get_object_or_404(Order, id=order_id)
+        order = get_object_or_404(GuestOrder, id=order_id)
+        print(order.id, order)
 
         return render(request, 'beer_haven/payment-process.html', {'order': order})
 
 
     def post(self, request):
         order_id = request.session.get('order_id', None)
-        order = get_object_or_404(Order, id=order_id)
+        order = get_object_or_404(GuestOrder, id=order_id)
         # https://docs.djangoproject.com/en/4.2/ref/request-response/
         # https://stripe.com/docs/checkout/quickstart
         success_url = request.build_absolute_uri(reverse('payment_completed'))
@@ -380,18 +384,17 @@ class PaymentProcess(View):
         for item in order.items.all():
             session_data['line_items'].append({
                 'price_data': {
-                    'unit_amount_decimal': item.price,
+                    'unit_amount': int(item.price * 100),
                     'currency': 'pln',
                     'product_data': {
                         'name': item.ingredient.name,
                     },
                 },
-                'quantity': item.amount
+                'quantity': int(item.amount)
             })
-        try:
-            session = stripe.checkout.Session.create(**session_data)
-        except StripeError as e:
-            return str(e)
+
+        session = stripe.checkout.Session.create(**session_data)
+
         return redirect(session.url, code=303) # 303 code recommended to redirect web applications to a new URI after a POST request is made
 
 
