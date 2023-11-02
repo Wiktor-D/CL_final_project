@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Recipe, Ingredient, Category, ExperienceTip, Dictionary, RecipeIngredient, Profile, UserAddress
+from .models import Recipe, Ingredient, Category, ExperienceTip, Dictionary, RecipeIngredient, Profile, UserAddress, UserOrderItem, GuestOrderItem, GuestOrder, UserOrder
 # Register your models here.
 
 
@@ -8,6 +8,15 @@ from .models import Recipe, Ingredient, Category, ExperienceTip, Dictionary, Rec
 # https://docs.djangoproject.com/en/4.2/ref/contrib/admin/
 class RecipeIngredientInline(admin.TabularInline):
     model = RecipeIngredient
+
+
+class GuestOrderItemInline(admin.TabularInline):
+    model = GuestOrderItem
+
+
+class UserOrderItemInline(admin.TabularInline):
+    model = UserOrderItem
+
 
 
 @admin.register(Recipe)
@@ -80,4 +89,21 @@ class ProfileAdmin(admin.ModelAdmin):
 @admin.register(UserAddress)
 class UserAddressAdmin(admin.ModelAdmin):
     list_display = ['user', 'city', 'street', 'building_nr', 'apartment_nr', 'postal_code', 'is_shipping_addr', 'is_billing_addr']
+
+
+@admin.register(UserOrder)
+class UserOrderAdmin(admin.ModelAdmin):
+    list_display = [
+        'user', 'billing_address', 'shipping_address', 'created', 'updated', 'paid'
+    ]
+    inlines = [UserOrderItemInline]
+
+
+@admin.register(GuestOrder)
+class GuestOrderAdmin(admin.ModelAdmin):
+    list_display = [
+        'guest_first_name', 'guest_last_name', 'guest_email', 'guest_billing_address', 'guest_shipping_address', 'guest_postal_code','created', 'updated', 'paid'
+    ]
+    inlines = [GuestOrderItemInline]
+
 

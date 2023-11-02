@@ -51,6 +51,11 @@ urlpatterns = [
     path('cart-details/', bh_views.CartDetailView.as_view(), name='cart_details'),
     path('cart-add-recipe/<int:recipe_id>/', bh_views.CartAddRecipeView.as_view(), name='cart_add_recipe'),
 
+    path('guest-order-create/', bh_views.GuestOrderCreateView.as_view(), name='guest_order_create'),
+
+    path('payment-process/', bh_views.PaymentProcess.as_view(), name='payment_process'),
+    path('payment-completed/', bh_views.PaymentCompleted.as_view(), name='payment_completed'),
+    path('payment-canceled/', bh_views.PaymentCanceled.as_view(), name='payment_canceled'),
 
 ]
 

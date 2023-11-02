@@ -4,6 +4,8 @@ from django.utils import timezone
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.conf import settings
 
+from decimal import Decimal
+
 # Create your models here.
 
 
@@ -129,9 +131,71 @@ class UserAddress(models.Model):
 
 
 class Order(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='order_user')
-    billing_address = models.ForeignKey(UserAddress, on_delete=models.CASCADE, related_name='order_billing_addr')
-    shipping_address = models.ForeignKey(UserAddress, on_delete=models.CASCADE, related_name='order_shipping_addr')
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     paid = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['-created']
+
+    def __str__(self):
+        return f'order {self.id}'
+
+    def get_total_cost(self):
+        cost = [item.get_cost() for item in self.items.all()]
+        return sum(cost)
+
+
+class GuestOrder(Order):
+    guest_first_name = models.CharField(max_length=64)
+    guest_last_name = models.CharField(max_length=64)
+    guest_email = models.EmailField()
+    guest_billing_address = models.CharField(max_length=255, blank=True, null=True)
+    guest_shipping_address = models.CharField(max_length=255)
+    guest_postal_code = models.CharField(max_length=6)
+    guest_city = models.CharField(max_length=128, blank=True, null=True)
+
+    def __str__(self):
+        return f'order {self.id}'
+
+    def get_total_cost(self):
+        cost = [item.get_cost() for item in self.items.all()]
+        return sum(cost)
+
+
+
+class UserOrder(Order):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True, related_name='order_user')
+    billing_address = models.ForeignKey(UserAddress, on_delete=models.CASCADE, blank=True, null=True, related_name='order_billing_addr')
+    shipping_address = models.ForeignKey(UserAddress, on_delete=models.CASCADE, blank=True, null=True, related_name='order_shipping_addr')
+
+
+    # class Meta:
+    #     ordering = ['-created']
+    #
+    # def __str__(self):
+    #     return f'order {self.id}'
+    #
+    # def get_total_cost(self):
+    #     cost = [item.get_cost() for item in self.items.all()]
+    #     return sum(cost)
+
+
+class OrderItem(models.Model):
+    ingredient = models.ForeignKey(Ingredient, on_delete=models.PROTECT, related_name='order_items')
+    amount = models.FloatField(validators=[MinValueValidator(0)], default=0)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return str(self.id)
+
+    def get_cost(self):
+        return self.price * Decimal(self.amount)
+
+
+class GuestOrderItem(OrderItem):
+    order = models.ForeignKey(GuestOrder, on_delete=models.CASCADE, related_name='items')
+
+
+class UserOrderItem(OrderItem):
+    order = models.ForeignKey(UserOrder, on_delete=models.CASCADE, related_name='items')

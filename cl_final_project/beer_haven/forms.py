@@ -2,7 +2,7 @@ from django import forms
 
 from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model, authenticate
-from .models import Profile, UserAddress
+from .models import Profile, UserAddress, GuestOrder, UserOrder
 from localflavor.pl.forms import PLPostalCodeField
 
 User = get_user_model()
@@ -82,3 +82,15 @@ class CartAddIngredientForm(forms.Form):
     override = forms.BooleanField(required=False,
                                   initial=False,
                                   widget=forms.HiddenInput)
+
+
+class GuestOrderCreateForm(forms.ModelForm):
+    guest_postal_code = PLPostalCodeField()
+
+    class Meta:
+        model = GuestOrder
+        fields = [
+            'guest_first_name', 'guest_last_name',
+            'guest_email', 'guest_billing_address',
+            'guest_shipping_address', 'guest_postal_code'
+        ]

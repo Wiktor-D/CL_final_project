@@ -1,0 +1,37 @@
+{% extends 'beer_haven/base.html' %}
+
+{% block title %} Checkout {% endblock %}
+
+{% block content %}
+    <main role="main">
+        <div class="container">
+
+                <div>
+                    <h3 class="display-3">Checkout</h3>
+                    <h4> Order details: </h4>
+                        <ul>
+                            {% for item in cart %}
+                                <li>
+                                    {{ item.amount }} x {{ item.ingredient.name }}
+                                    <span> {{ item.total_price }} PLN</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+
+                        <p>
+                            Total: {{ cart.get_total_price }} PLN
+                        </p>
+                </div>
+                <form method="POST">
+                    {{ form.as_p }}
+                    <p>
+                        <input type="submit" value="pledge an order">
+                    </p>
+                    {% csrf_token %}
+                </form>
+
+
+        </div>
+
+    </main>
+{% endblock %}

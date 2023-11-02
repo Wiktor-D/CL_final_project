@@ -1,0 +1,23 @@
+{% extends 'beer_haven/base.html' %}
+
+{% block title %} Thank You {% endblock %}
+
+{% block content %}
+    <main role="main">
+        <div>
+
+                <div>
+                    <h3 class="display-3">Thank You</h3>
+                    <h4>
+                        The order has been successfully pledged and the order number is
+                        <strong>
+                            {{ order.id }}
+                        </strong>
+                    </h4>
+
+                </div>
+
+        </div>
+
+    </main>
+{% endblock %}

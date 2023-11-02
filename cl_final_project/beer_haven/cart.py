@@ -51,7 +51,7 @@ class Cart:
             1.  Ingredient IDs (keys) are retrieved from the shopping cart
             2.  Ingredient objects whose IDs are in the cart are retrieved.
             3.  A copy of the shopping cart is created to avoid changing the original cart.
-            4.  In a for loop for each ingredient in the cart,
+            4.  In a "for" loop for each ingredient in the cart,
                 information about the corresponding Ingredient object is added
                 to the item in the cart, and price and total price calculations are performed.
             5.  Finally, the items in the cart are returned during the iteration."""
@@ -81,6 +81,6 @@ class Cart:
         for ingredient in recipe.recipe_ingredients.all():
             self.add(ingredient.ingredient, ingredient.amount)
 
-        # session_data = dict(self.session.items())
-        # print(session_data)
+        session_data = dict(self.session.items())
+        print(session_data)
 

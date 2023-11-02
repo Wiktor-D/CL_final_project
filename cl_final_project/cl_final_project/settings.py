@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-hakdix8=x8qes_)t+*%b4o9y4jj-m*7$(7(-9#6uuytz#6cq=-'
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -131,9 +131,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = '/login/'
 
+SESSION_COOKIE_AGE = 24 * 60 * 60
+
 
 try:
-    from .local_settings import DATABASES, EMAIL_BACKEND, EMAIL_HOST_USER
+    from .local_settings import SECRET_KEY, DATABASES, EMAIL_BACKEND, EMAIL_HOST_USER, STRIPE_PUBLISHABLE_KEY, STRIPE_SECRET_KEY, STRIPE_API_VERSION
 except ModuleNotFoundError:
     print("There is no database configuration in local_settings.py file!")
     print("Fill missing data and try again!")
