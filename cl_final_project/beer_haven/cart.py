@@ -81,6 +81,8 @@ class Cart:
         for ingredient in recipe.recipe_ingredients.all():
             self.add(ingredient.ingredient, ingredient.amount)
 
-        session_data = dict(self.session.items())
-        print(session_data)
+        # session_data = dict(self.session.items())
+        # print(session_data)
+
+
 

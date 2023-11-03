@@ -13,6 +13,7 @@ from django.views.generic import ListView, FormView, CreateView, UpdateView, Det
 from django.urls import reverse_lazy, reverse
 from django.core.mail import send_mail
 import stripe
+
 from decimal import Decimal
 from stripe.error import StripeError
 from .cart import Cart
@@ -87,28 +88,49 @@ class LogoutView(View):
         return redirect('login')
 
 
-class UserRegistrationView(CreateView):
+# class UserRegistrationView(CreateView):
+#
+#     template_name = 'beer_haven/registration.html'
+#     form_class = UserRegistrationForm
+#     success_url = reverse_lazy('register')
+#
+#     def form_valid(self, form):
+#         user = get_user_model()
+#         new_user = user.objects.create_user(
+#             first_name=form.cleaned_data['first_name'],
+#             last_name=form.cleaned_data['last_name'],
+#             username=form.cleaned_data['username'],
+#             email=form.cleaned_data['email'],
+#             password=form.cleaned_data['password']
+#         )
+#
+#         Profile.objects.create(user=new_user)
+#         # https://docs.djangoproject.com/en/4.2/ref/contrib/messages/
+#         messages.success(self.request, 'Account created successfully')
+#         return super().form_valid(form)
 
+class UserRegistrationView(View):
+    registration_form = UserRegistrationForm
     template_name = 'beer_haven/registration.html'
-    form_class = UserRegistrationForm
-    success_url = reverse_lazy('register')
 
-    def form_valid(self, form):
-        user = get_user_model()
-        new_user = user.objects.create_user(
-            first_name=form.cleaned_data['first_name'],
-            last_name=form.cleaned_data['last_name'],
-            username=form.cleaned_data['username'],
-            email=form.cleaned_data['email'],
-            password=form.cleaned_data['password']
-        )
-
-        Profile.objects.create(user=new_user)
-
-        messages.success(self.request, 'Account created successfully')
-        return super().form_valid(form)
+    def get(self, request):
+        form = self.registration_form()
+        return render(request, self.template_name, {'form': form})
 
 
+    def post(self, request):
+        form = self.registration_form(request.POST)
+        if form.is_valid():
+            new_user = form.save(commit=False)
+            new_user.set_password(
+                form.cleaned_data['password']
+            )
+            new_user.save()
+            Profile.objects.create(user=new_user)
+            messages.success(self.request, 'Account created successfully')
+
+            return render(request, self.template_name, {})
+        return render(request, self.template_name, {'form': form})
 
 
 class UserDetails(LoginRequiredMixin, UserPassesTestMixin, DetailView):
@@ -136,7 +158,7 @@ class RecipesListView(ListView):
     template_name = "beer_haven/recipes-list.html"
     model = Recipe
     context_object_name = 'recipes'
-    paginate_by = 2
+    paginate_by = 10
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -205,12 +227,6 @@ class CartAddView(View):
         of the Ingredient model.
         If the form is valid we add the product to the cart and are redirected to the cart details page.
 
-        Args:
-            param1 (int): ingredient_id
-
-        Returns:
-            Redirect to cart_detail
-
         """
     def post(self, request, ingredient_id):
         cart = Cart(request)
@@ -233,12 +249,6 @@ class CartAddRecipeView(View):
         The view gets the ingredient_id parameter based on this id we retrieve the corresponding copy
         of the Ingredient model.
         If the form is valid we add the product to the cart and are redirected to the cart details page.
-
-        Args:
-            param1 (int): ingredient_id
-
-        Returns:
-            Redirect to cart_detail
 
         """
     def post(self, request, recipe_id):
@@ -393,9 +403,9 @@ class PaymentProcess(View):
                 'quantity': int(item.amount)
             })
 
-        session = stripe.checkout.Session.create(**session_data)
+        stripe_session = stripe.checkout.Session.create(**session_data)
 
-        return redirect(session.url, code=303) # 303 code recommended to redirect web applications to a new URI after a POST request is made
+        return redirect(stripe_session.url, code=303) # 303 code recommended to redirect web applications to a new URI after a POST request is made
 
 
 class PaymentCompleted(View):
