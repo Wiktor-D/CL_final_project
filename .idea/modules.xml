@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/CL_final_project.iml" filepath="$PROJECT_DIR$/.idea/CL_final_project.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../Django-4-by-example/Chapter04/bookmarks/.idea/bookmarks.iml" filepath="$PROJECT_DIR$/../Django-4-by-example/Chapter04/bookmarks/.idea/bookmarks.iml" />
     </modules>
   </component>
 </project>

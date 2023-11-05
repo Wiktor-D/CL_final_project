@@ -18,7 +18,6 @@
     </content>
     <orderEntry type="jdk" jdkName="Python 3.9 (CL_final_project)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="bookmarks" />
   </component>
   <component name="TemplatesService">
     <option name="TEMPLATE_CONFIGURATION" value="Django" />

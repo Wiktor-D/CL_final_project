@@ -80,7 +80,8 @@ def test_user_registration(client, fake_users_group):
 
     response = client.post('/register/', user_data)
     assert response.status_code == 200
-    # assert User.objects.count() == before_users + 1
+    assert response.context['form'].errors
+    assert User.objects.count() == before_users + 1
     # new_user = User.objects.get(username='Dracula')
     # profile = Profile.objects.get(user=new_user)
     # assert profile.user == user

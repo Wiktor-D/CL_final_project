@@ -48,6 +48,7 @@ class SearchView(View):
         form = SearchForm(request.POST)
         if form.is_valid():
             query = form.cleaned_data['query']
+            # https://docs.djangoproject.com/en/4.2/ref/contrib/postgres/search/
             results = Recipe.objects.annotate(
                 search=SearchVector('title', 'description', 'prep_description', 'ingredients__name', 'categories__name'),
             ).filter(search__icontains=query).values('pk').distinct()
@@ -117,7 +118,6 @@ class UserRegistrationView(View):
         form = self.registration_form()
         return render(request, self.template_name, {'form': form})
 
-
     def post(self, request):
         form = self.registration_form(request.POST)
         if form.is_valid():
@@ -129,7 +129,7 @@ class UserRegistrationView(View):
             Profile.objects.create(user=new_user)
             messages.success(self.request, 'Account created successfully')
 
-            return render(request, self.template_name, {})
+            return render(request, self.template_name, {'form': form})
         return render(request, self.template_name, {'form': form})
 
 
@@ -193,6 +193,7 @@ class EditProfile(LoginRequiredMixin, FormView):
 
 
 class AddAddress(LoginRequiredMixin, CreateView):
+    """view for add new address of user"""
     template_name = 'beer_haven/add-address.html'
     form_class = UserAddressForm
 
@@ -207,6 +208,7 @@ class AddAddress(LoginRequiredMixin, CreateView):
 
 
 class EditAddress(LoginRequiredMixin, UpdateView):
+    """View for edit address of user"""
     template_name = 'beer_haven/add-address.html'
     form_class = UserAddressForm
     model = UserAddress

@@ -19,7 +19,7 @@ class Cart:
         and the quantity of the product and its price as the value.
 
         ingredient.id is converted to a text string because Django uses
-        JSON format for serialized session data. Decimal is also converted for the same reason"""
+        JSON format for serializing session data. Decimal is also converted for the same reason"""
         ingredient_id = str(ingredient.id)
         if ingredient_id not in self.cart:
             self.cart[ingredient_id] = {
